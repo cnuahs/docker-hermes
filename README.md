@@ -1,6 +1,10 @@
 # docker-hermes
 
-Custom Hermes Agent image.
+![Docker Image CI](https://github.com/cnuahs/docker-hermes/actions/workflows/build-docker.yml/badge.svg)
+![GitHub release](https://img.shields.io/github/v/tag/cnuahs/docker-hermes)
+![ghcr.io](https://img.shields.io/badge/ghcr.io-enabled-brightgreen)
+
+This repository builds and publishes a custom Docker image for [Hermes](https://github.com/NousResearch/hermes-agent) -- _"the agent that grows with you"_.
 
 ## Base image
 
