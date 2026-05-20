@@ -1,0 +1,32 @@
+# Docker compose for Hermes Agent (custom image)
+#
+# Commands:
+#   - docker compose up [start interactive chat; default]
+#   - docker compose run --rm hermes hermes --resume <session> [resume a session]
+#   - docker compose run --rm hermes hermes --continue [continue latest session]
+#
+#   - docker compose up -d gateway [start the gateway]
+
+name: hermes-agent
+
+services:
+  hermes:
+    image: ghcr.io/cnuahs/hermes-agent:latest
+    container_name: hermes
+    stdin_open: true
+    tty: true
+    volumes:
+      - .hermes:/opt/data
+    environment:
+      - TZ=Australia/Melbourne
+    command: ["hermes"]
+
+  gateway:
+    image: ghcr.io/cnuahs/hermes-agent:latest
+    container_name: hermes-gateway
+    restart: unless-stopped
+    volumes:
+      - .hermes:/opt/data
+    environment:
+      - TZ=Australia/Melbourne
+    command: ["hermes", "gateway", "run"]
