@@ -1,9 +1,6 @@
-# 2026-05-20 - Shaun L. Cloherty <s.cloherty@ieee.org>
+# 2026-05-24 - Shaun L. Cloherty <s.cloherty@ieee.org>
 
 FROM nousresearch/hermes-agent:main
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        gh && \
-    apt-get clean -y && rm -rf /var/lib/apt/lists/*
-
+# Copy bws binary from official Bitwarden Secrets Manager image
+COPY --from=ghcr.io/bitwarden/bws /usr/local/bin/bws /usr/local/bin/bws
