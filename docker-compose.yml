@@ -44,7 +44,9 @@ services:
     restart: unless-stopped
     volumes:
       - .hermes:/opt/data
+      - ./docker/remove-lock.sh:/opt/hermes/docker/remove-lock.sh:ro
     environment:
       <<: *common-env
     entrypoint: ["/init", "/opt/hermes/docker/main-wrapper.sh", "bws", "run", "--"]
-    command: ["hermes", "gateway", "run"]
+    command: ["sh", "-c", "/opt/hermes/docker/remove-lock.sh && exec hermes gateway run"]
+
