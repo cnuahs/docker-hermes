@@ -29,7 +29,7 @@ fi
 
 case "$SERVICE" in
     "hermes" | "tui")
-        docker compose run --rm hermes bws run -- hermes "$@"
+        docker compose run --rm hermes hermes "$@"
         ;;
     "gateway")
         docker compose up -d gateway "$@"
