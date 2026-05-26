@@ -19,6 +19,12 @@
 
 name: hermes-agent
 
+x-common-env: &common-env
+  BWS_ACCESS_TOKEN: ${BWS_ACCESS_TOKEN:-}
+  HOME: /opt/data
+  S6_KEEP_ENV: 1
+  TZ: Australia/Melbourne
+
 services:
   hermes:
     image: ghcr.io/cnuahs/hermes-agent:latest
@@ -28,9 +34,7 @@ services:
     volumes:
       - .hermes:/opt/data
     environment:
-      - S6_KEEP_ENV=1
-      - TZ=Australia/Melbourne
-      - BWS_ACCESS_TOKEN=${BWS_ACCESS_TOKEN:-}
+      <<: *common-env
     entrypoint: ["/init", "/opt/hermes/docker/main-wrapper.sh", "bws", "run", "--"]
     command: ["hermes"]
 
@@ -41,8 +45,6 @@ services:
     volumes:
       - .hermes:/opt/data
     environment:
-      - S6_KEEP_ENV=1
-      - TZ=Australia/Melbourne
-      - BWS_ACCESS_TOKEN=${BWS_ACCESS_TOKEN:-}
+      <<: *common-env
     entrypoint: ["/init", "/opt/hermes/docker/main-wrapper.sh", "bws", "run", "--"]
     command: ["hermes", "gateway", "run"]
