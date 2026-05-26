@@ -35,18 +35,18 @@ export BWS_ACCESS_TOKEN=<token>
 Then start hermes or the gateway:
 
 ```bash
-docker compose run --rm hermes                        # interactive chat
+docker compose run --rm hermes                        # start session
 docker compose run --rm hermes hermes --continue      # continue last session
 docker compose run --rm hermes hermes --resume <s>    # resume session <s>
 docker compose up -d gateway                          # start gateway daemon
 ```
 
-A convenience wrapper, `bin/run.sh`, is provided to perform these
+A convenience wrapper, `run.sh`, is provided to perform these
 steps, loading the token from `.env.bws` automatically:
 
 ```bash
-./bin/run.sh hermes          # interactive chat
-./bin/run.sh gateway         # start gateway daemon
+./run.sh hermes          # start interactive chat
+./run.sh gateway         # start gateway daemon
 ```
 
 To use the wrapper, the `.env.bws` file in the working directory should provide
