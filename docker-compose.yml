@@ -1,11 +1,21 @@
 # Docker compose for Hermes Agent (custom image)
 #
-# Commands:
-#   - docker compose up [start interactive chat; default]
-#   - docker compose run --rm hermes hermes --resume <session> [resume a session]
-#   - docker compose run --rm hermes hermes --continue [continue latest session]
+# Usage:
 #
-#   - docker compose up -d gateway [start the gateway]
+#   To start hermes (interactive chat, or gateway daemon), fetching credentials
+#   from Bitwarden Secrets Manager:
+#
+#   1. Set your Bitwarden Secrets Manager token in the environment:
+#
+#      export BWS_ACCESS_TOKEN=<token>
+#
+#   2. Then one of:
+#
+#      docker compose run --rm hermes                        interactive chat
+#      docker compose run --rm hermes hermes --continue      continue last session
+#      docker compose run --rm hermes hermes --resume <s>    resume session <s>
+#
+#      docker compose up -d gateway                          start gateway daemon
 
 name: hermes-agent
 
@@ -18,7 +28,10 @@ services:
     volumes:
       - .hermes:/opt/data
     environment:
+      - S6_KEEP_ENV=1
       - TZ=Australia/Melbourne
+      - BWS_ACCESS_TOKEN=${BWS_ACCESS_TOKEN:-}
+    entrypoint: ["/init", "/opt/hermes/docker/main-wrapper.sh", "bws", "run", "--"]
     command: ["hermes"]
 
   gateway:
@@ -28,5 +41,8 @@ services:
     volumes:
       - .hermes:/opt/data
     environment:
+      - S6_KEEP_ENV=1
       - TZ=Australia/Melbourne
+      - BWS_ACCESS_TOKEN=${BWS_ACCESS_TOKEN:-}
+    entrypoint: ["/init", "/opt/hermes/docker/main-wrapper.sh", "bws", "run", "--"]
     command: ["hermes", "gateway", "run"]

@@ -16,38 +16,47 @@ This repository builds and publishes a custom Docker image for [Hermes](https://
 ## What's included
 
 - Everything from `nousresearch/hermes-agent:main`
-- `gh` (GitHub CLI) 
+- `bws` (Bitwarden Secrets Manager CLI)
+
+## Secrets management
+
+Secrets (API keys, tokens) are stored in [Bitwarden Secrets Manager](https://bitwarden.com/products/secrets-manager/)
+and injected at container startup via `bws run`. No secrets are written to disk — not in
+`.env`, not in the container filesystem.
 
 ## Usage
 
-1. Clone this repo alongside your existing Hermes setup.
+Set the machine access token in your shell environment:
 
-2. To launch the gateway:
+```bash
+export BWS_ACCESS_TOKEN=<token>
+```
 
-   ```bash
-   docker compose up -d gateway
-   ```
+Then start hermes or the gateway:
 
-3. To launch the interractive TUI:
+```bash
+docker compose run --rm hermes                        # interactive chat
+docker compose run --rm hermes hermes --continue      # continue last session
+docker compose run --rm hermes hermes --resume <s>    # resume session <s>
+docker compose up -d gateway                          # start gateway daemon
+```
 
-   ```bash
-   docker compose up
-   ```
+A convenience wrapper, `bin/run.sh`, is provided to perform these
+steps, loading the token from `.env.bws` automatically:
 
-   or, to pass command line argument to the agent process,
+```bash
+./bin/run.sh hermes          # interactive chat
+./bin/run.sh gateway         # start gateway daemon
+```
 
-   ```bash
-   docker compse run --rm hermes hermes [args]
-   ```
+To use the wrapper, the `.env.bws` file in the working directory should provide
+the machine access token, e.g.,
 
-   For example,
+```
+BWS_ACCESS_TOKEN=<your-machine-access-token>
+```
 
-   ```bash
-   docker compose run --rm hermes hermes --continue  # continue the last session
-   ```
-   ```bash
-   docker compose run --rm hermes hermes --resume <session>  # resume session <session>
-   ```
+`.env.bws` is gitignored. Never commit it.
 
 ## Updating the image
 
