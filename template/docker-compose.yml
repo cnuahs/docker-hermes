@@ -1,0 +1,37 @@
+# docker-compose.yml — Hermes Agent TUI for this project
+#
+# Usage:
+#   docker compose run --rm hermes                        # start interactive TUI
+#   docker compose run --rm hermes --continue             # continue last session
+#   docker compose run --rm hermes --resume <session>     # resume specific session
+#
+# Prerequisites:
+#   - Docker Desktop running
+#   - .env.bws with BWS_ACCESS_TOKEN (gitignored)
+#
+# Secrets are fetched from Bitwarden Secrets Manager via `bws run` at
+# container startup — they exist only in the container process environment.
+# Persistent state (sessions, logs, skills) is stored in .hermes/.
+
+# 2026-05-29 - Shaun L. Cloherty <s.cloherty@ieee.org>
+
+name: hermes-PROJECT_NAME
+
+services:
+  hermes:
+    image: ghcr.io/cnuahs/hermes-agent:latest
+    container_name: hermes-PROJECT_NAME
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/opt/data/workspace
+      - .hermes:/opt/data
+    working_dir: /opt/data/workspace
+    environment:
+      - S6_KEEP_ENV=1
+      - TZ=Australia/Melbourne
+      - HOME=/opt/data
+    env_file:
+      - .env.bws
+    entrypoint: ["/init", "/opt/hermes/docker/main-wrapper.sh", "bws", "run", "--"]
+    command: ["hermes"]

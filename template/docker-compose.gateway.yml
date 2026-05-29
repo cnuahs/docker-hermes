@@ -1,0 +1,26 @@
+# docker-compose.gateway.yml — Hermes Agent Gateway for this project
+#
+# Usage:
+#   docker compose -f docker-compose.gateway.yml up -d gateway
+#   docker compose -f docker-compose.gateway.yml logs -f gateway
+
+# 2026-05-29 - Shaun L. Cloherty <s.cloherty@ieee.org>
+
+name: hermes-PROJECT_NAME
+
+services:
+  gateway:
+    image: ghcr.io/cnuahs/hermes-agent:latest
+    container_name: hermes-PROJECT_NAME-gateway
+    restart: unless-stopped
+    volumes:
+      - .hermes:/opt/data
+      - ./docker/remove-lock.sh:/opt/hermes/docker/remove-lock.sh:ro
+    environment:
+      - S6_KEEP_ENV=1
+      - TZ=Australia/Melbourne
+      - HOME=/opt/data
+    env_file:
+      - .env.bws
+    entrypoint: ["/init", "/opt/hermes/docker/main-wrapper.sh", "bws", "run", "--"]
+    command: ["sh", "-c", "/opt/hermes/docker/remove-lock.sh && exec hermes gateway run"]
