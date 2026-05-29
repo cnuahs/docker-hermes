@@ -68,17 +68,24 @@ or can be triggered manually via the Actions tab (`workflow_dispatch`).
 
 To pick up the latest base image without triggering the Github workflow:
 
-1. Build and test locally:
+1. Build locally:
 
    ```bash
    docker build --pull -t ghcr.io/cnuahs/hermes-agent:test .
-   docker compose run --rm hermes
    ```
 
    `--pull` ensures the latest `nousresearch/hermes-agent:main` base image
-   is used.
+   is used. Note `test` in the tag.
 
-2. If the test succeeds, trigger the Github workflow:
+2. Test locally. Use the `VERSION` env var to select the local `test` build:
+
+   ```bash
+   VERSION=test docker compose run --rm hermes
+   ```
+
+   When `VERSION` is unset, it defaults to `latest` (the GHCR image).
+
+3. If testing if successful, trigger the Github workflow:
 
    - Go to **Actions > Build and push Hermes Agent Docker image > Run workflow**
    - Or via CLI: `gh workflow run build-docker.yml`
@@ -95,7 +102,7 @@ To pick up the latest base image without triggering the Github workflow:
    The workflow builds a multi-arch image, generates an SBOM and attestation,
    and pushes to GHCR.
 
-3. Pull the updated image:
+4. Pull the updated image:
 
    ```bash
    docker compose pull gateway
@@ -113,7 +120,7 @@ git push origin main
 ```
 
 The workflow builds and pushes to GHCR automatically. Then pull and restart as
-in 3. above.
+in 4. above.
 
 ## Checking the base image SHA
 
