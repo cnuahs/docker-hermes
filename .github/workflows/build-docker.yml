@@ -5,6 +5,7 @@
 name: Build and push Hermes Agent Docker image
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main

@@ -60,22 +60,64 @@ BWS_ACCESS_TOKEN=<your-machine-access-token>
 
 ## Updating the image
 
-1. Clone this repo.
-2. Edit Dockerfile.
-3. Commit and push to `main`.
+The image is built and published to GHCR by Github Actions. The workflow
+runs automatically when the Dockerfile or workflow file changes on `main`,
+or can be triggered manually via the Actions tab (`workflow_dispatch`).
 
-When pushed to `main`, GitHub Actions builds the image and pushes to GHCR automatically.
+### Manual rebuild (no code changes needed)
 
-Then,
+To pick up the latest base image without triggering the Github workflow:
+
+1. Build and test locally:
+
+   ```bash
+   docker build --pull -t ghcr.io/cnuahs/hermes-agent:test .
+   docker compose run --rm hermes
+   ```
+
+   `--pull` ensures the latest `nousresearch/hermes-agent:main` base image
+   is used.
+
+2. If the test succeeds, trigger the Github workflow:
+
+   - Go to **Actions > Build and push Hermes Agent Docker image > Run workflow**
+   - Or via CLI: `gh workflow run build-docker.yml`
+   - Or via REST API:
+
+     ```bash
+     curl -X POST \
+       -H "Authorization: token $GITHUB_TOKEN" \
+       -H "Accept: application/vnd.github+json" \
+       https://api.github.com/repos/<owner>/docker-hermes/actions/workflows/build-docker.yml/dispatches \
+       -d '{"ref":"main"}'
+     ```
+
+   The workflow builds a multi-arch image, generates an SBOM and attestation,
+   and pushes to GHCR.
+
+3. Pull the updated image:
+
+   ```bash
+   docker compose pull gateway
+   docker compose up -d gateway
+   ```
+
+### Image changes
+
+For actual Dockerfile changes, commit and push to `main`:
 
 ```bash
-docker compose pull gateway
-docker compose up -d gateway
+git add Dockerfile
+git commit
+git push origin main
 ```
+
+The workflow builds and pushes to GHCR automatically. Then pull and restart as
+in 3. above.
 
 ## Checking the base image SHA
 
-Each build records the exact base image digest as a label:
+Each workflow build records the exact base image digest as a label:
 
 ```bash
 docker inspect ghcr.io/cnuahs/hermes-agent:latest \
@@ -88,6 +130,6 @@ This returns the SHA256 digest of the base image used (e.g., `sha256:abc123...`)
 FROM nousresearch/hermes-agent@sha256:abc123...
 ```
 
-## Adding more tools
+## Adding tools
 
-Edit the `Dockerfile`, add your `apt-get install` lines, commit and push to `main`. The workflow rebuilds and pushes automatically.
+Edit the `Dockerfile`, add your `apt-get install` lines, test locally then commit and push to `main`. The workflow rebuilds and pushes automatically.
