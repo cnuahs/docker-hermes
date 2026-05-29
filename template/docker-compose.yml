@@ -19,7 +19,7 @@ name: hermes-PROJECT_NAME
 
 services:
   hermes:
-    image: ghcr.io/cnuahs/hermes-agent:latest
+    image: ghcr.io/cnuahs/hermes-agent:${VERSION:-latest}
     container_name: hermes-PROJECT_NAME
     stdin_open: true
     tty: true

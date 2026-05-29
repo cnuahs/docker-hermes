@@ -10,7 +10,7 @@ name: hermes-PROJECT_NAME
 
 services:
   gateway:
-    image: ghcr.io/cnuahs/hermes-agent:latest
+    image: ghcr.io/cnuahs/hermes-agent:${VERSION:-latest}
     container_name: hermes-PROJECT_NAME-gateway
     restart: unless-stopped
     volumes:

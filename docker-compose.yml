@@ -27,7 +27,7 @@ x-common-env: &common-env
 
 services:
   hermes:
-    image: ghcr.io/cnuahs/hermes-agent:latest
+    image: ghcr.io/cnuahs/hermes-agent:${VERSION:-latest}
     container_name: hermes
     stdin_open: true
     tty: true
@@ -39,7 +39,7 @@ services:
     command: ["hermes"]
 
   gateway:
-    image: ghcr.io/cnuahs/hermes-agent:latest
+    image: ghcr.io/cnuahs/hermes-agent:${VERSION:-latest}
     container_name: hermes-gateway
     restart: unless-stopped
     volumes:
